@@ -6,5 +6,5 @@ to use the below template:
 
 ```
 # API key for api.exchangeratesapi.io service
-CURRENCY_EXCHANGE_API_KEY=yourApiKeyGoesHere
+CURRENCY_EXCHANGE_API_KEY="yourApiKeyGoesHere"
 ```
