@@ -1,7 +1,10 @@
 package com.github.pksokolowski.currencyconverter.ui
 
 import androidx.compose.foundation.clickable
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.padding
 import androidx.compose.material.DropdownMenu
 import androidx.compose.material.DropdownMenuItem
 import androidx.compose.material.Icon
@@ -15,23 +18,23 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun <T> Spinner(
     items: List<T>,
-    selectedItem: T? = null,
+    selectedItem: T?,
     onSelectedItemChanged: (T) -> Unit,
     drawItem: @Composable (T?) -> Unit,
+    modifier: Modifier = Modifier,
     dropdownArrowContentDescription: String = ""
 ) {
     var expanded by remember { mutableStateOf(false) }
 
     Box(
-        modifier = Modifier.fillMaxWidth(),
-        contentAlignment = Alignment.Center
+        modifier = modifier
+            .clickable {
+                expanded = !expanded
+            },
+        contentAlignment = Alignment.CenterEnd
     ) {
         Row(
             modifier = Modifier
-                .padding(24.dp)
-                .clickable {
-                    expanded = !expanded
-                }
                 .padding(8.dp),
             horizontalArrangement = Arrangement.Center,
             verticalAlignment = Alignment.CenterVertically
