@@ -5,10 +5,9 @@ import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
-import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.tooling.preview.Preview
-import androidx.lifecycle.viewmodel.compose.viewModel
+import com.github.pksokolowski.currencyconverter.ui.ConverterScreen
 import com.github.pksokolowski.currencyconverter.ui.theme.CurrencyConverterTheme
 import dagger.hilt.android.AndroidEntryPoint
 
@@ -27,12 +26,6 @@ class MainActivity : ComponentActivity() {
     }
 }
 
-@Composable
-fun ConverterScreen(
-    viewModel: MainViewModel = viewModel()
-) {
-    Text(text = "Hello! $viewModel")
-}
 
 @Preview(showBackground = true)
 @Composable
