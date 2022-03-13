@@ -15,6 +15,9 @@ class MainViewModel @Inject constructor(
 ) : ViewModel() {
     val subWallets = MutableStateFlow(listOf<CurrencySubWallet>())
     val sellInputValue = MutableStateFlow("0.00")
+    val buyInputValue = MutableStateFlow("0.00")
+    val sellCurrency = MutableStateFlow("EUR")
+    val buyCurrency = MutableStateFlow("EUR")
 
     init {
         viewModelScope.launch {
@@ -23,6 +26,22 @@ class MainViewModel @Inject constructor(
     }
 
     fun setSellInputValue(newValue: String) {
-        sellInputValue.value = newValue
+        if (newValue.count { it == '.' } > 1) return
+        sellInputValue.value = newValue.filter {
+            it.isDigit() || it == '.'
+        }
+    }
+
+    fun setBuyInputValue(newValue: String) {
+        // this is an illegal action, nothing needs to be changed
+        // however, an error message might be shown
+    }
+
+    fun setSellCurrency(currencyCode: String) {
+        sellCurrency.value = currencyCode
+    }
+
+    fun setBuyCurrency(currencyCode: String) {
+        buyCurrency.value = currencyCode
     }
 }
