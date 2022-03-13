@@ -1,29 +1,30 @@
-package com.github.pksokolowski.currencyconverter.ui
+package com.github.pksokolowski.currencyconverter.ui.screens
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
-import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.foundation.text.BasicTextField
-import androidx.compose.material.*
+import androidx.compose.material.ButtonDefaults
+import androidx.compose.material.OutlinedButton
+import androidx.compose.material.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.painter.Painter
 import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.pksokolowski.currencyconverter.MainViewModel
 import com.github.pksokolowski.currencyconverter.R
+import com.github.pksokolowski.currencyconverter.ui.views.CurrencyAndAmountForm
 import com.github.pksokolowski.currencyconverter.ui.theme.Purple700
 
 @Composable
@@ -65,7 +66,7 @@ fun ConverterScreen(
             color = colorResource(id = R.color.faded_label)
         )
 
-        CurrencyExchangeForm(
+        CurrencyAndAmountForm(
             icon = painterResource(R.drawable.ic_sell_24),
             color = Color.Red,
             label = stringResource(id = R.string.label_sell),
@@ -76,7 +77,7 @@ fun ConverterScreen(
             onSelectedCurrencyChange = viewModel::setSellCurrency,
         )
 
-        CurrencyExchangeForm(
+        CurrencyAndAmountForm(
             icon = painterResource(R.drawable.ic_buy_24),
             color = Color.Green,
             label = stringResource(id = R.string.label_buy),
@@ -100,76 +101,6 @@ fun ConverterScreen(
             Text(
                 text = stringResource(id = R.string.button_submit_exchange),
                 modifier = Modifier.padding(32.dp, 0.dp)
-            )
-        }
-    }
-}
-
-@Composable
-fun CurrencyExchangeForm(
-    icon: Painter,
-    color: Color,
-    label: String,
-    amount: String,
-    availableCurrencies: List<String>,
-    onAmountChange: (String) -> Unit,
-    selectedCurrency: String,
-    onSelectedCurrencyChange: (String) -> Unit,
-) {
-    Row(
-        modifier = Modifier
-            .padding(8.dp)
-            .fillMaxWidth(),
-        verticalAlignment = Alignment.CenterVertically,
-        horizontalArrangement = Arrangement.SpaceBetween
-    ) {
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            Button(
-                onClick = { },
-                modifier = Modifier.size(50.dp),
-                shape = CircleShape,
-                border = BorderStroke(1.dp, Color.Transparent),
-                contentPadding = PaddingValues(0.dp),  //avoid the little icon
-                colors = ButtonDefaults.outlinedButtonColors(
-                    contentColor = Color.White,
-                    backgroundColor = color
-                )
-            ) {
-                Icon(
-                    icon,
-                    contentDescription = "content description"
-                )
-            }
-            Text(
-                text = label,
-                modifier = Modifier.padding(8.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(16.dp))
-        Row(
-            verticalAlignment = Alignment.CenterVertically,
-            horizontalArrangement = Arrangement.SpaceBetween
-        ) {
-            BasicTextField(
-                modifier = Modifier
-                    .padding(8.dp)
-                    .weight(1f),
-                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
-                value = amount,
-                onValueChange = onAmountChange
-            )
-            Spinner(
-                availableCurrencies,
-                selectedCurrency,
-                onSelectedCurrencyChange,
-                { item ->
-                    Text(item ?: "")
-                },
-                modifier = Modifier
-                    .width(64.dp),
             )
         }
     }

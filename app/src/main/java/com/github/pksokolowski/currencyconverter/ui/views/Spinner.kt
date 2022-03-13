@@ -1,4 +1,4 @@
-package com.github.pksokolowski.currencyconverter.ui
+package com.github.pksokolowski.currencyconverter.ui.views
 
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
