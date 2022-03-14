@@ -1,4 +1,5 @@
 package com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.model
 
-class GetCurrencyExchangeRatesResponse {
-}
+data class GetCurrencyExchangeRatesResponse(
+    val rates: Map<String, String>
+)

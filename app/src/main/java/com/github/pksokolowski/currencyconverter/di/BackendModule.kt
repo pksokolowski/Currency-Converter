@@ -1,5 +1,6 @@
 package com.github.pksokolowski.currencyconverter.di
 
+import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.CurrencyExchangeRatesClient
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn
@@ -18,4 +19,9 @@ object BackendModule {
         .baseUrl("https://api.exchangeratesapi.io/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
+
+    @Provides
+    fun provideAirQualityService(retrofit: Retrofit): CurrencyExchangeRatesClient =
+        retrofit.create(CurrencyExchangeRatesClient::class.java)
+
 }
