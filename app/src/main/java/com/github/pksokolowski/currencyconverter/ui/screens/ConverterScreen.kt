@@ -39,7 +39,7 @@ fun ConverterScreen(
     val sellCurrencySelected = viewModel.sellCurrency.collectAsState()
     val buyCurrencySelected = viewModel.buyCurrency.collectAsState()
 
-    Column() {
+    Column {
         Text(
             text = stringResource(R.string.label_my_balances),
             fontSize = 10.sp,
