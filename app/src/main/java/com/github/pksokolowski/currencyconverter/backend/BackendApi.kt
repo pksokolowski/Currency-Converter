@@ -5,5 +5,5 @@ import java.math.BigDecimal
 
 interface BackendApi {
     suspend fun getUserWallet(): UserWallet?
-    suspend fun getExchangeRateFor(currencyCode: String): BigDecimal?
+    suspend fun getExchangeRates(): Map<String, BigDecimal>?
 }

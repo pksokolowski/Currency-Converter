@@ -16,7 +16,7 @@ import retrofit2.converter.gson.GsonConverterFactory
 object BackendModule {
     @Provides
     fun provideRetrofit(): Retrofit = Retrofit.Builder()
-        .baseUrl("https://api.exchangeratesapi.io/")
+        .baseUrl("http://api.exchangeratesapi.io/")
         .addConverterFactory(GsonConverterFactory.create())
         .build()
 

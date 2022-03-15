@@ -33,7 +33,9 @@ class EuroBasedCurrencyRatesRepository @Inject constructor(
             }
 
             val response = apiClient.getLatest() ?: return@withContext null
-            lastReturnedValue = response.rates.mapValues {
+            val rates = response.rates ?: return@withContext null
+
+            lastReturnedValue = rates.mapValues {
                 BigDecimal(it.value)
             }
             lastReturnedValue

@@ -15,7 +15,7 @@ class BackendApiImpl @Inject constructor(
         return UserWallet(userDataRepository.getUserData())
     }
 
-    override suspend fun getExchangeRateFor(currencyCode: String): BigDecimal? {
-        return exchangeRatesRepository.getAllRates()?.get(currencyCode)
+    override suspend fun getExchangeRates(): Map<String, BigDecimal>? {
+        return exchangeRatesRepository.getAllRates()
     }
 }
