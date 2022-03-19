@@ -7,6 +7,7 @@ import com.github.pksokolowski.currencyconverter.domain.ObtainExchangeRateUseCas
 import com.github.pksokolowski.currencyconverter.domain.ObtainSubWalletsUseCase
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.launchIn
 import kotlinx.coroutines.launch
@@ -15,44 +16,57 @@ import javax.inject.Inject
 @HiltViewModel
 class MainViewModel @Inject constructor(
     private val obtainSubWalletsUseCase: ObtainSubWalletsUseCase,
-    private val obtainExchangeRateUseCase: ObtainExchangeRateUseCase,
+    obtainExchangeRateUseCase: ObtainExchangeRateUseCase,
 ) : ViewModel() {
-    // todo use an interface with immutable flows or add private mutable props
-    val subWallets = MutableStateFlow(listOf<CurrencySubWallet>())
-    val sellInputValue = MutableStateFlow("0.00")
-    val buyInputValue = MutableStateFlow("0.00")
-    val sellCurrency = MutableStateFlow("EUR")
-    val buyCurrency = MutableStateFlow("EUR")
 
-    private val selectedCurrencyExchangeRate = obtainExchangeRateUseCase.getUpdates()
-        .combine(buyCurrency) { allRates, selectedCurrencyCode ->
-            allRates?.get(selectedCurrencyCode)
-        }
-        .launchIn(viewModelScope)
+    //<editor-fold defaultstate="collapsed" desc="private, mutable props">
+    private val _subWallets = MutableStateFlow(listOf<CurrencySubWallet>())
+    private val _sellInputValue = MutableStateFlow("0.00")
+    private val _buyInputValue = MutableStateFlow("0.00")
+    private val _sellCurrency = MutableStateFlow("EUR")
+    private val _buyCurrency = MutableStateFlow("EUR")
+    //</editor-fold>
+
+    val subWallets = _subWallets.asStateFlow()
+    val sellInputValue = _sellInputValue.asStateFlow()
+    val buyInputValue = _buyInputValue.asStateFlow()
+    val sellCurrency = _sellCurrency.asStateFlow()
+    val buyCurrency = _buyCurrency.asStateFlow()
 
     init {
+        fetchSubWallets()
+
+        obtainExchangeRateUseCase.getUpdates()
+            .combine(buyCurrency) { allRates, selectedCurrencyCode ->
+                allRates?.get(selectedCurrencyCode)
+            }
+            .launchIn(viewModelScope)
+    }
+
+    private fun fetchSubWallets() {
         viewModelScope.launch {
-            subWallets.value = obtainSubWalletsUseCase.fetchSubWallets() ?: listOf()
+            _subWallets.value = obtainSubWalletsUseCase.fetchSubWallets() ?: listOf()
         }
     }
 
     fun setSellInputValue(newValue: String) {
         if (newValue.count { it == '.' } > 1) return
-        sellInputValue.value = newValue.filter {
+        _sellInputValue.value = newValue.filter {
             it.isDigit() || it == '.'
         }
     }
 
+    @Suppress("UNUSED_PARAMETER")
     fun setBuyInputValue(newValue: String) {
         // this is an illegal action, nothing needs to be changed
         // however, an error message might be shown
     }
 
     fun setSellCurrency(currencyCode: String) {
-        sellCurrency.value = currencyCode
+        _sellCurrency.value = currencyCode
     }
 
     fun setBuyCurrency(currencyCode: String) {
-        buyCurrency.value = currencyCode
+        _buyCurrency.value = currencyCode
     }
 }
