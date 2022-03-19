@@ -14,6 +14,6 @@ class GetCurrencyExchangeRatesResponseParsingTest {
         val gson = Gson()
         val parsed = gson.fromJson(responseJson, GetCurrencyExchangeRatesResponse::class.java)
 
-        assertTrue(parsed.rates["USD"] == "1.094721")
+        assertTrue(parsed.rates?.get("USD") == "1.094721")
     }
 }
