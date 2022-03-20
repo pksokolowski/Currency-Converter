@@ -1,6 +1,8 @@
 package com.github.pksokolowski.currencyconverter.backend.server
 
 import com.github.pksokolowski.currencyconverter.backend.BackendApi
+import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
+import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
 import com.github.pksokolowski.currencyconverter.backend.server.model.UserWallet
 import com.github.pksokolowski.currencyconverter.backend.server.repository.EuroBasedCurrencyRatesRepository
 import com.github.pksokolowski.currencyconverter.backend.server.repository.UserDataRepository
@@ -17,5 +19,9 @@ class BackendApiImpl @Inject constructor(
 
     override suspend fun getExchangeRates(): Map<String, BigDecimal>? {
         return exchangeRatesRepository.getAllRates()
+    }
+
+    override suspend fun performExchange(exchangeTransactionRequest: ExchangeTransactionRequest): ExchangeTransactionResult {
+        return ExchangeTransactionResult(true, "Pykło wybornie milordzie!")
     }
 }

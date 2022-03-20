@@ -7,9 +7,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.ButtonDefaults
-import androidx.compose.material.OutlinedButton
-import androidx.compose.material.Text
+import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Alignment
@@ -21,23 +19,24 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.DialogProperties
+import androidx.compose.ui.window.SecureFlagPolicy
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.pksokolowski.currencyconverter.MainViewModel
 import com.github.pksokolowski.currencyconverter.R
-import com.github.pksokolowski.currencyconverter.ui.views.CurrencyAndAmountForm
 import com.github.pksokolowski.currencyconverter.ui.theme.Purple700
+import com.github.pksokolowski.currencyconverter.ui.views.CurrencyAndAmountForm
 
 @Composable
 fun ConverterScreen(
     viewModel: MainViewModel = viewModel()
 ) {
     val subWallets = viewModel.subWallets.collectAsState()
-
     val sellInputValue = viewModel.sellInputValue.collectAsState()
     val buyInputValue = viewModel.buyInputValue.collectAsState()
-
     val sellCurrencySelected = viewModel.sellCurrency.collectAsState()
     val buyCurrencySelected = viewModel.buyCurrency.collectAsState()
+    val exchangeOperationStatus = viewModel.message.collectAsState()
 
     Column {
         Text(
@@ -90,7 +89,7 @@ fun ConverterScreen(
 
         OutlinedButton(
             modifier = Modifier.align(CenterHorizontally),
-            onClick = { },
+            onClick = viewModel::submitTransaction,
             border = BorderStroke(1.dp, Color.LightGray),
             shape = RoundedCornerShape(50),
             colors = ButtonDefaults.outlinedButtonColors(
@@ -101,6 +100,26 @@ fun ConverterScreen(
             Text(
                 text = stringResource(id = R.string.button_submit_exchange),
                 modifier = Modifier.padding(32.dp, 0.dp)
+            )
+        }
+
+        exchangeOperationStatus.value?.let { status ->
+            AlertDialog(
+                properties = DialogProperties(
+                    dismissOnBackPress = false,
+                    dismissOnClickOutside = false,
+                    securePolicy = SecureFlagPolicy.Inherit
+                ),
+                onDismissRequest = viewModel::dismissMessage,
+                buttons = {
+                    Button(
+                        modifier = Modifier.align(CenterHorizontally),
+                        onClick = viewModel::dismissMessage
+                    ) {
+                        Text(text = stringResource(id = R.string.button_ok))
+                    }
+                },
+                text = { Text(status.getString()) }
             )
         }
     }

@@ -7,4 +7,5 @@
     <string name="label_buy">Receive</string>
 
     <string name="button_submit_exchange">Submit</string>
+    <string name="button_ok">OK</string>
 </resources>
