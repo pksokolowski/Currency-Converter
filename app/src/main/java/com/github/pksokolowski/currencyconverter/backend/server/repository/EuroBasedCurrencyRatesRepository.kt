@@ -31,6 +31,7 @@ class EuroBasedCurrencyRatesRepository @Inject constructor(
             if (now - lastUpdateTimeStamp <= REFRESH_MIN_DELAY_MILLIS) {
                 return@withContext lastReturnedValue
             }
+            lastUpdateTimeStamp = now
 
             val response = apiClient.getLatest() ?: return@withContext null
             val rates = response.rates ?: return@withContext null
