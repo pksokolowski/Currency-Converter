@@ -1,5 +1,6 @@
 package com.github.pksokolowski.currencyconverter.backend.server.repository
 
+import android.icu.math.BigDecimal
 import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.CurrencyExchangeRatesClient
 import com.github.pksokolowski.currencyconverter.backend.server.utils.CurrentTimeProvider
 import com.github.pksokolowski.currencyconverter.di.IoDispatcher
@@ -7,7 +8,6 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import java.math.BigDecimal
 import javax.inject.Inject
 
 class EuroBasedCurrencyRatesRepository @Inject constructor(

@@ -1,9 +1,9 @@
 package com.github.pksokolowski.currencyconverter.backend
 
+import android.icu.math.BigDecimal
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
 import com.github.pksokolowski.currencyconverter.backend.server.model.UserWallet
-import java.math.BigDecimal
 
 interface BackendApi {
     suspend fun getUserWallet(): UserWallet?

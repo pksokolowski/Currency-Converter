@@ -1,17 +1,18 @@
 package com.github.pksokolowski.currencyconverter.backend.server
 
+import android.icu.math.BigDecimal
 import com.github.pksokolowski.currencyconverter.backend.BackendApi
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
 import com.github.pksokolowski.currencyconverter.backend.server.model.UserWallet
 import com.github.pksokolowski.currencyconverter.backend.server.repository.EuroBasedCurrencyRatesRepository
 import com.github.pksokolowski.currencyconverter.backend.server.repository.UserDataRepository
-import java.math.BigDecimal
 import javax.inject.Inject
 
 class BackendApiImpl @Inject constructor(
     private val userDataRepository: UserDataRepository,
-    private val exchangeRatesRepository: EuroBasedCurrencyRatesRepository
+    private val exchangeRatesRepository: EuroBasedCurrencyRatesRepository,
+    private val currencyExchangeProcessor: CurrencyExchangeProcessor,
 ) : BackendApi {
     override suspend fun getUserWallet(): UserWallet? {
         return UserWallet(userDataRepository.getUserData())
@@ -22,6 +23,6 @@ class BackendApiImpl @Inject constructor(
     }
 
     override suspend fun performExchange(exchangeTransactionRequest: ExchangeTransactionRequest): ExchangeTransactionResult {
-        return ExchangeTransactionResult(true, "Pykło wybornie milordzie!")
+        return currencyExchangeProcessor.process(exchangeTransactionRequest)
     }
 }

@@ -80,7 +80,7 @@ class MainViewModel @Inject constructor(
 
     fun submitTransaction() {
         viewModelScope.launch {
-            val result = performExchangeUseCase.exchange(
+            val transactionStatus = performExchangeUseCase.exchange(
                 sellAmount = sellInputValue.value,
                 sellCurrencyCode = sellCurrency.value,
                 buyAmount = buyInputValue.value,
@@ -88,8 +88,12 @@ class MainViewModel @Inject constructor(
             )
 
             _message.value = LiteralTextMessage(
-                result.message
+                transactionStatus.message
             )
+
+            if (transactionStatus.accepted) {
+                fetchSubWallets()
+            }
         }
     }
 
