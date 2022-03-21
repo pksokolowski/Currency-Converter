@@ -1,6 +1,7 @@
 package com.github.pksokolowski.currencyconverter.backend.server.repository
 
 import android.icu.math.BigDecimal
+import com.github.pksokolowski.currencyconverter.BuildConfig
 import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.CurrencyExchangeRatesClient
 import com.github.pksokolowski.currencyconverter.backend.server.utils.CurrentTimeProvider
 import com.github.pksokolowski.currencyconverter.di.IoDispatcher
@@ -33,7 +34,8 @@ class EuroBasedCurrencyRatesRepository @Inject constructor(
             }
             lastUpdateTimeStamp = now
 
-            val response = apiClient.getLatest() ?: return@withContext null
+            val response = apiClient.getLatest(BuildConfig.CURRENCY_EXCHANGE_API_KEY)
+                ?: return@withContext null
             val rates = response.rates ?: return@withContext null
 
             lastReturnedValue = rates.mapValues {
