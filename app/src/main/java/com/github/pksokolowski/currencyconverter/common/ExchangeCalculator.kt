@@ -10,3 +10,13 @@ fun computeExchangeValue(
     val baseAmount = amount.divide(soldCurrencyRate)
     return baseAmount.multiply(purchasedCurrencyRate)
 }
+
+fun computeExchangeValue(
+    amount: String,
+    soldCurrencyRate: BigDecimal,
+    purchasedCurrencyRate: BigDecimal,
+): BigDecimal = computeExchangeValue(
+    BigDecimal(amount),
+    soldCurrencyRate,
+    purchasedCurrencyRate
+)

@@ -32,8 +32,8 @@ fun ConverterScreen(
     viewModel: MainViewModel = viewModel()
 ) {
     val subWallets = viewModel.subWallets.collectAsState()
-    val sellInputValue = viewModel.sellInputValue.collectAsState()
-    val buyInputValue = viewModel.buyInputValue.collectAsState()
+    val sellInputValue = viewModel.sellAmount.collectAsState()
+    val buyInputValue = viewModel.buyAmount.collectAsState()
     val sellCurrencySelected = viewModel.sellCurrency.collectAsState()
     val buyCurrencySelected = viewModel.buyCurrency.collectAsState()
     val exchangeOperationStatus = viewModel.message.collectAsState()
@@ -71,7 +71,7 @@ fun ConverterScreen(
             label = stringResource(id = R.string.label_sell),
             amount = sellInputValue.value,
             availableCurrencies = subWallets.value.map { it.currencyCode },
-            onAmountChange = viewModel::setSellInputValue,
+            onAmountChange = viewModel::setSellAmount,
             selectedCurrency = sellCurrencySelected.value,
             onSelectedCurrencyChange = viewModel::setSellCurrency,
         )
@@ -82,7 +82,7 @@ fun ConverterScreen(
             label = stringResource(id = R.string.label_buy),
             amount = buyInputValue.value,
             availableCurrencies = subWallets.value.map { it.currencyCode },
-            onAmountChange = viewModel::setBuyInputValue,
+            onAmountChange = viewModel::setBuyAmount,
             selectedCurrency = buyCurrencySelected.value,
             onSelectedCurrencyChange = viewModel::setBuyCurrency,
         )

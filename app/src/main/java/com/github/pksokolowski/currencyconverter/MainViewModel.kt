@@ -1,18 +1,17 @@
 package com.github.pksokolowski.currencyconverter
 
+import android.icu.math.BigDecimal
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
+import com.github.pksokolowski.currencyconverter.common.computeExchangeValue
 import com.github.pksokolowski.currencyconverter.domain.ObtainExchangeRateUseCase
 import com.github.pksokolowski.currencyconverter.domain.ObtainSubWalletsUseCase
 import com.github.pksokolowski.currencyconverter.domain.PerformExchangeUseCase
 import com.github.pksokolowski.currencyconverter.ui.utils.LiteralTextMessage
 import com.github.pksokolowski.currencyconverter.ui.utils.TextMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.MutableStateFlow
-import kotlinx.coroutines.flow.asStateFlow
-import kotlinx.coroutines.flow.combine
-import kotlinx.coroutines.flow.launchIn
+import kotlinx.coroutines.flow.*
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -25,8 +24,8 @@ class MainViewModel @Inject constructor(
 
     //<editor-fold defaultstate="collapsed" desc="private, mutable props">
     private val _subWallets = MutableStateFlow(listOf<CurrencySubWallet>())
-    private val _sellInputValue = MutableStateFlow("0.00")
-    private val _buyInputValue = MutableStateFlow("0.00")
+    private val _sellAmount = MutableStateFlow("0.00")
+    private val _buyAmount = MutableStateFlow("0.00")
     private val _sellCurrency = MutableStateFlow("EUR")
     private val _buyCurrency = MutableStateFlow("EUR")
 
@@ -34,20 +33,36 @@ class MainViewModel @Inject constructor(
     //</editor-fold>
 
     val subWallets = _subWallets.asStateFlow()
-    val sellInputValue = _sellInputValue.asStateFlow()
-    val buyInputValue = _buyInputValue.asStateFlow()
+    val sellAmount = _sellAmount.asStateFlow()
+    val buyAmount = _buyAmount.asStateFlow()
     val sellCurrency = _sellCurrency.asStateFlow()
     val buyCurrency = _buyCurrency.asStateFlow()
 
     val message = _message.asStateFlow()
 
+    private data class ExchangeRates(
+        val sellCurrencyRate: BigDecimal,
+        val buyCurrencyRate: BigDecimal
+    )
+
     init {
         fetchSubWallets()
 
-        obtainExchangeRateUseCase.getUpdates()
-            .combine(buyCurrency) { allRates, selectedCurrencyCode ->
-                allRates?.get(selectedCurrencyCode)
+        combine(
+            obtainExchangeRateUseCase.getUpdates(),
+            sellCurrency,
+            buyCurrency,
+        ) { allRates, sold, bought ->
+            if (allRates == null) return@combine null
+            val sellCurrencyRate = allRates[sold] ?: return@combine null
+            val buyCurrencyRate = allRates[bought] ?: return@combine null
+            ExchangeRates(sellCurrencyRate, buyCurrencyRate)
+        }
+            .combine(_sellAmount) { rates, amount ->
+                if (rates == null) return@combine null
+                computeExchangeValue(amount, rates.sellCurrencyRate, rates.buyCurrencyRate)
             }
+            .onEach { _buyAmount.value = it?.toString() ?: "" }
             .launchIn(viewModelScope)
     }
 
@@ -57,15 +72,15 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setSellInputValue(newValue: String) {
+    fun setSellAmount(newValue: String) {
         if (newValue.count { it == '.' } > 1) return
-        _sellInputValue.value = newValue.filter {
+        _sellAmount.value = newValue.filter {
             it.isDigit() || it == '.'
         }
     }
 
     @Suppress("UNUSED_PARAMETER")
-    fun setBuyInputValue(newValue: String) {
+    fun setBuyAmount(newValue: String) {
         // this is an illegal action, nothing needs to be changed
         // however, an error message might be shown
     }
@@ -81,9 +96,9 @@ class MainViewModel @Inject constructor(
     fun submitTransaction() {
         viewModelScope.launch {
             val transactionStatus = performExchangeUseCase.exchange(
-                sellAmount = sellInputValue.value,
+                sellAmount = sellAmount.value,
                 sellCurrencyCode = sellCurrency.value,
-                buyAmount = buyInputValue.value,
+                buyAmount = buyAmount.value,
                 buyCurrencyCode = buyCurrency.value
             )
 
