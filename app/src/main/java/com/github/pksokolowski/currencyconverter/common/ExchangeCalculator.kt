@@ -1,6 +1,8 @@
 package com.github.pksokolowski.currencyconverter.common
 
 import android.icu.math.BigDecimal
+import android.icu.math.MathContext
+
 
 fun computeExchangeValue(
     amount: BigDecimal,
@@ -8,7 +10,8 @@ fun computeExchangeValue(
     purchasedCurrencyRate: BigDecimal,
 ): BigDecimal {
     val baseAmount = amount.divide(soldCurrencyRate)
-    return baseAmount.multiply(purchasedCurrencyRate)
+    val unscaledResult = baseAmount.multiply(purchasedCurrencyRate)
+    return unscaledResult.setScale(2, MathContext.ROUND_DOWN)
 }
 
 fun computeExchangeValue(

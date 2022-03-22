@@ -1,6 +1,7 @@
 package com.github.pksokolowski.currencyconverter.backend.server
 
 import android.icu.math.BigDecimal
+import android.icu.math.MathContext
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
 import com.github.pksokolowski.currencyconverter.backend.server.repository.EuroBasedCurrencyRatesRepository
@@ -30,7 +31,7 @@ class CurrencyExchangeProcessor @Inject constructor(
 
         val sellCurrencyRate = currentRates[transaction.sellCurrencyCode]
             ?: return error("Traded currency's exchange rate not available")
-        val buyCurrencyRate = currentRates[transaction.sellCurrencyCode]
+        val buyCurrencyRate = currentRates[transaction.buyCurrencyCode]
             ?: return error("Exchange rate not available for the currency to be purchased")
 
         val convertedAmount =
@@ -41,7 +42,9 @@ class CurrencyExchangeProcessor @Inject constructor(
         }
 
         val commissionFee = if (userDataRepository.transactionsCounter > 7) {
-            BigDecimal("0.007").multiply(transaction.sellAmount)
+            BigDecimal("0.007")
+                .multiply(transaction.sellAmount)
+                .setScale(2, MathContext.ROUND_UP)
         } else {
             BigDecimal("0.00")
         }

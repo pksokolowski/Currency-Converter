@@ -22,7 +22,6 @@ class MainViewModel @Inject constructor(
     private val performExchangeUseCase: PerformExchangeUseCase,
     obtainExchangeRateUseCase: ObtainExchangeRateUseCase,
 ) : ViewModel() {
-    private val decimalFormat = DecimalFormat("###.##")
 
     //<editor-fold defaultstate="collapsed" desc="private, mutable props">
     private val _subWallets = MutableStateFlow(listOf<CurrencySubWallet>())
@@ -64,7 +63,7 @@ class MainViewModel @Inject constructor(
                 if (rates == null) return@combine null
                 computeExchangeValue(amount, rates.sellCurrencyRate, rates.buyCurrencyRate)
             }
-            .onEach { _buyAmount.value = decimalFormat.format(it) }
+            .onEach { _buyAmount.value = it.toString() }
             .launchIn(viewModelScope)
     }
 
