@@ -1,6 +1,7 @@
 package com.github.pksokolowski.currencyconverter
 
 import android.icu.math.BigDecimal
+import android.icu.text.DecimalFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
@@ -21,6 +22,7 @@ class MainViewModel @Inject constructor(
     private val performExchangeUseCase: PerformExchangeUseCase,
     obtainExchangeRateUseCase: ObtainExchangeRateUseCase,
 ) : ViewModel() {
+    private val decimalFormat = DecimalFormat("###.##")
 
     //<editor-fold defaultstate="collapsed" desc="private, mutable props">
     private val _subWallets = MutableStateFlow(listOf<CurrencySubWallet>())
@@ -62,7 +64,7 @@ class MainViewModel @Inject constructor(
                 if (rates == null) return@combine null
                 computeExchangeValue(amount, rates.sellCurrencyRate, rates.buyCurrencyRate)
             }
-            .onEach { _buyAmount.value = it?.toString() ?: "" }
+            .onEach { _buyAmount.value = decimalFormat.format(it) }
             .launchIn(viewModelScope)
     }
 
@@ -74,8 +76,9 @@ class MainViewModel @Inject constructor(
 
     fun setSellAmount(newValue: String) {
         if (newValue.count { it == '.' } > 1) return
-        _sellAmount.value = newValue.filter {
-            it.isDigit() || it == '.'
+        val dotIndex = newValue.indexOf(".")
+        _sellAmount.value = newValue.filterIndexed { i, char ->
+            i < dotIndex + 3 && (char.isDigit() || char == '.')
         }
     }
 
