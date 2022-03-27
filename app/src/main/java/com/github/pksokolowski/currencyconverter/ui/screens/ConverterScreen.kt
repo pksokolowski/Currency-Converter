@@ -51,7 +51,7 @@ fun ConverterScreen(
         ) {
             items(subWallets.value) { wallet ->
                 Column(
-                    horizontalAlignment = Alignment.CenterHorizontally,
+                    horizontalAlignment = CenterHorizontally,
                 ) {
                     Text(text = wallet.amount.toString() + " ${wallet.currencyCode}")
                 }

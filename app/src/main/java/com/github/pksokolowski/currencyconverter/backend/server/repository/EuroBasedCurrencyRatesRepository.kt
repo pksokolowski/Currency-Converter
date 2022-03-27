@@ -3,6 +3,7 @@ package com.github.pksokolowski.currencyconverter.backend.server.repository
 import android.icu.math.BigDecimal
 import com.github.pksokolowski.currencyconverter.BuildConfig
 import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.CurrencyExchangeRatesClient
+import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.model.GetCurrencyExchangeRatesResponse
 import com.github.pksokolowski.currencyconverter.backend.server.utils.CurrentTimeProvider
 import com.github.pksokolowski.currencyconverter.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
@@ -34,7 +35,7 @@ class EuroBasedCurrencyRatesRepository @Inject constructor(
             }
             lastUpdateTimeStamp = now
 
-            val response = apiClient.getLatest(BuildConfig.CURRENCY_EXCHANGE_API_KEY)
+            val response = mockResponse //apiClient.getLatest(BuildConfig.CURRENCY_EXCHANGE_API_KEY)
                 ?: return@withContext null
             val rates = response.rates ?: return@withContext null
 
@@ -48,3 +49,13 @@ class EuroBasedCurrencyRatesRepository @Inject constructor(
 }
 
 private const val REFRESH_MIN_DELAY_MILLIS = 5_000
+
+private val mockResponse = GetCurrencyExchangeRatesResponse(
+    true,
+    mapOf(
+        "EUR" to "1.0",
+        "JPY" to "1.1",
+        "USD" to "1.2",
+        "GBP" to "1.3",
+    )
+)

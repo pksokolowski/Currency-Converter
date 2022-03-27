@@ -6,14 +6,13 @@ import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock
 import kotlinx.coroutines.withContext
-import javax.inject.Inject
 
-class UserDataRepository @Inject constructor() {
+class UserDataRepository {
     private val mutex = Mutex()
 
     var transactionsCounter = 0
 
-    fun getUserData(): List<CurrencySubWallet> = usersSubWallets
+    fun getUserData(): List<CurrencySubWallet> = usersSubWallets.sortedBy { it.currencyCode }
 
     // mock users data, for one test user only
     private val usersSubWallets = mutableListOf(
