@@ -5,6 +5,7 @@ import android.icu.math.MathContext
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
 import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
 import com.github.pksokolowski.currencyconverter.backend.server.repository.EuroBasedCurrencyRatesRepository
+import com.github.pksokolowski.currencyconverter.backend.server.repository.InsufficientFundsException
 import com.github.pksokolowski.currencyconverter.backend.server.repository.UserDataRepository
 import com.github.pksokolowski.currencyconverter.common.computeExchangeValue
 import kotlinx.coroutines.NonCancellable
@@ -34,6 +35,10 @@ class CurrencyExchangeProcessor @Inject constructor(
         val buyCurrencyRate = currentRates[transaction.buyCurrencyCode]
             ?: return error("Exchange rate not available for the currency to be purchased")
 
+        require(buyCurrencyRate > BigDecimal(0) && sellCurrencyRate > BigDecimal(0)) {
+            return error("Error: Invalid, negative exchange rate")
+        }
+
         val convertedAmount =
             computeExchangeValue(transaction.sellAmount, sellCurrencyRate, buyCurrencyRate)
 
@@ -49,16 +54,20 @@ class CurrencyExchangeProcessor @Inject constructor(
             BigDecimal("0.00")
         }
 
-        // kind of simulation of transaction integrity enforcement
-        withContext(NonCancellable) {
-            userDataRepository.changeSubWallet(
-                transaction.sellCurrencyCode,
-                transaction.sellAmount.add(commissionFee).multiply(BigDecimal("-1.00"))
-            )
-            userDataRepository.changeSubWallet(
-                transaction.buyCurrencyCode,
-                convertedAmount
-            )
+        try {
+            // kind of simulation of transaction integrity enforcement
+            withContext(NonCancellable) {
+                userDataRepository.changeSubWallet(
+                    transaction.sellCurrencyCode,
+                    transaction.sellAmount.add(commissionFee).multiply(BigDecimal("-1.00"))
+                )
+                userDataRepository.changeSubWallet(
+                    transaction.buyCurrencyCode,
+                    convertedAmount
+                )
+            }
+        } catch (e: InsufficientFundsException) {
+            return error("Insufficient funds")
         }
 
         userDataRepository.transactionsCounter += 1

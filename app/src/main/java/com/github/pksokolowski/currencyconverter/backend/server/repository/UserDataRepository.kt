@@ -1,6 +1,7 @@
 package com.github.pksokolowski.currencyconverter.backend.server.repository
 
 import android.icu.math.BigDecimal
+import android.icu.math.MathContext
 import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.sync.Mutex
@@ -30,11 +31,22 @@ class UserDataRepository {
                         .also { usersSubWallets.add(it) }
                 }
 
-                val modifiedSubWallet =
-                    CurrencySubWallet(currencyCode, subWallet.amount.add(addedAmount))
+                val roundingPolicy = if (addedAmount > BigDecimal(0)) MathContext.ROUND_DOWN
+                else MathContext.ROUND_UP
+
+                val modifiedSubWallet = CurrencySubWallet(
+                    currencyCode,
+                    subWallet.amount
+                        .add(addedAmount)
+                        .setScale(2, roundingPolicy)
+                )
+
+                if (modifiedSubWallet.amount < BigDecimal(0)) throw InsufficientFundsException()
 
                 usersSubWallets.removeIf { it.currencyCode == currencyCode }
                 usersSubWallets.add(modifiedSubWallet)
             }
         }
 }
+
+class InsufficientFundsException : Exception()
