@@ -28,7 +28,7 @@ class MainViewModel @Inject constructor(
     private val _sellAmount = MutableStateFlow("0.00")
     private val _buyAmount = MutableStateFlow("0.00")
     private val _sellCurrency = MutableStateFlow("EUR")
-    private val _buyCurrency = MutableStateFlow("EUR")
+    private val _buyCurrency = MutableStateFlow("USD")
 
     private val _message = MutableStateFlow<TextMessage?>(null)
     //</editor-fold>
