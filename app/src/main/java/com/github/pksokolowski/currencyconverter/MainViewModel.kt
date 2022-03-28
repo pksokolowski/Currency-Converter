@@ -1,6 +1,5 @@
 package com.github.pksokolowski.currencyconverter
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
@@ -51,9 +50,7 @@ class MainViewModel @Inject constructor(
         val sellCurrencyRate = allRates[sellCurrencyValue] ?: return@combine null
         val buyCurrencyRate = allRates[buyCurrencyValue] ?: return@combine null
         computeExchangeValue(sellAmountValue, sellCurrencyRate, buyCurrencyRate).toString()
-    }
-        .onEach { Log.d("MainViewModel", "Emitted new buy amount value $it") }
-        .onEach { _buyAmount = it.toString() }
+    }.onEach { _buyAmount = it.toString() }
 
     init {
         fetchSubWallets()

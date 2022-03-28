@@ -10,15 +10,19 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
 import androidx.compose.ui.window.SecureFlagPolicy
+import androidx.lifecycle.Lifecycle
+import androidx.lifecycle.flowWithLifecycle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.github.pksokolowski.currencyconverter.MainViewModel
 import com.github.pksokolowski.currencyconverter.R
@@ -29,12 +33,15 @@ import com.github.pksokolowski.currencyconverter.ui.views.CurrencyAndAmountForm
 fun ConverterScreen(
     viewModel: MainViewModel = viewModel()
 ) {
+    val lifecycleOwner = LocalLifecycleOwner.current
     val subWallets = viewModel.subWallets.collectAsState()
     val sellInputValue = viewModel.sellAmount.collectAsState()
-    val buyInputValue = viewModel.buyAmount.collectAsState("0.00")
     val sellCurrencySelected = viewModel.sellCurrency.collectAsState()
     val buyCurrencySelected = viewModel.buyCurrency.collectAsState()
     val exchangeOperationStatus = viewModel.message.collectAsState()
+    val buyInputValue = remember(viewModel.buyAmount, lifecycleOwner) {
+        viewModel.buyAmount.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
+    }.collectAsState("0.00")
 
     Column {
         Text(
