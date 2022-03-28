@@ -1,5 +1,6 @@
 package com.github.pksokolowski.currencyconverter
 
+import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
@@ -10,7 +11,10 @@ import com.github.pksokolowski.currencyconverter.domain.PerformExchangeUseCase
 import com.github.pksokolowski.currencyconverter.ui.utils.LiteralTextMessage
 import com.github.pksokolowski.currencyconverter.ui.utils.TextMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
-import kotlinx.coroutines.flow.*
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.onEach
 import kotlinx.coroutines.launch
 import javax.inject.Inject
 
@@ -24,37 +28,35 @@ class MainViewModel @Inject constructor(
     //<editor-fold defaultstate="collapsed" desc="private, mutable props">
     private val _subWallets = MutableStateFlow(listOf<CurrencySubWallet>())
     private val _sellAmount = MutableStateFlow("0.00")
-    private val _buyAmount = MutableStateFlow("0.00")
     private val _sellCurrency = MutableStateFlow("EUR")
     private val _buyCurrency = MutableStateFlow("USD")
-
     private val _message = MutableStateFlow<TextMessage?>(null)
+    private var _buyAmount = "0.00"
     //</editor-fold>
 
     val subWallets = _subWallets.asStateFlow()
     val sellAmount = _sellAmount.asStateFlow()
-    val buyAmount = _buyAmount.asStateFlow()
     val sellCurrency = _sellCurrency.asStateFlow()
     val buyCurrency = _buyCurrency.asStateFlow()
 
     val message = _message.asStateFlow()
 
+    val buyAmount = combine(
+        obtainExchangeRateUseCase.getUpdates(),
+        sellCurrency,
+        buyCurrency,
+        sellAmount,
+    ) { allRates, sellCurrencyValue, buyCurrencyValue, sellAmountValue ->
+        if (allRates == null) return@combine null
+        val sellCurrencyRate = allRates[sellCurrencyValue] ?: return@combine null
+        val buyCurrencyRate = allRates[buyCurrencyValue] ?: return@combine null
+        computeExchangeValue(sellAmountValue, sellCurrencyRate, buyCurrencyRate).toString()
+    }
+        .onEach { Log.d("MainViewModel", "Emitted new buy amount value $it") }
+        .onEach { _buyAmount = it.toString() }
+
     init {
         fetchSubWallets()
-
-        combine(
-            obtainExchangeRateUseCase.getUpdates(),
-            sellCurrency,
-            buyCurrency,
-            sellAmount,
-        ) { allRates, sellCurrencyValue, buyCurrencyValue, sellAmountValue ->
-            if (allRates == null) return@combine null
-            val sellCurrencyRate = allRates[sellCurrencyValue] ?: return@combine null
-            val buyCurrencyRate = allRates[buyCurrencyValue] ?: return@combine null
-            computeExchangeValue(sellAmountValue, sellCurrencyRate, buyCurrencyRate)
-        }
-            .onEach { _buyAmount.value = it.toString() }
-            .launchIn(viewModelScope)
     }
 
     private fun fetchSubWallets() {
@@ -90,7 +92,7 @@ class MainViewModel @Inject constructor(
             val transactionStatus = performExchangeUseCase.exchange(
                 sellAmount = sellAmount.value,
                 sellCurrencyCode = sellCurrency.value,
-                buyAmount = buyAmount.value,
+                buyAmount = _buyAmount,
                 buyCurrencyCode = buyCurrency.value
             )
 

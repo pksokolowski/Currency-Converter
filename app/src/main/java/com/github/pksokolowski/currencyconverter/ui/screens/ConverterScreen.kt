@@ -10,11 +10,9 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Alignment.Companion.CenterHorizontally
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.res.colorResource
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
@@ -33,7 +31,7 @@ fun ConverterScreen(
 ) {
     val subWallets = viewModel.subWallets.collectAsState()
     val sellInputValue = viewModel.sellAmount.collectAsState()
-    val buyInputValue = viewModel.buyAmount.collectAsState()
+    val buyInputValue = viewModel.buyAmount.collectAsState("0.00")
     val sellCurrencySelected = viewModel.sellCurrency.collectAsState()
     val buyCurrencySelected = viewModel.buyCurrency.collectAsState()
     val exchangeOperationStatus = viewModel.message.collectAsState()
@@ -43,7 +41,6 @@ fun ConverterScreen(
             text = stringResource(R.string.label_my_balances),
             fontSize = 10.sp,
             modifier = Modifier.padding(8.dp),
-            color = colorResource(id = R.color.faded_label)
         )
         LazyRow(
             modifier = Modifier.padding(8.dp),
@@ -62,7 +59,6 @@ fun ConverterScreen(
             text = stringResource(R.string.label_exchange),
             fontSize = 10.sp,
             modifier = Modifier.padding(8.dp),
-            color = colorResource(id = R.color.faded_label)
         )
 
         CurrencyAndAmountForm(
@@ -80,7 +76,7 @@ fun ConverterScreen(
             icon = painterResource(R.drawable.ic_buy_24),
             color = Color.Green,
             label = stringResource(id = R.string.label_buy),
-            amount = buyInputValue.value,
+            amount = buyInputValue.value ?: "0.00",
             availableCurrencies = subWallets.value.map { it.currencyCode },
             onAmountChange = viewModel::setBuyAmount,
             selectedCurrency = buyCurrencySelected.value,

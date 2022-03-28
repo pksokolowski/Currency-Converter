@@ -67,10 +67,13 @@ fun CurrencyAndAmountForm(
                 modifier = Modifier
                     .padding(8.dp)
                     .weight(1f),
-                textStyle = LocalTextStyle.current.copy(textAlign = TextAlign.End),
+                textStyle = LocalTextStyle.current.copy(
+                    textAlign = TextAlign.End,
+                    color = MaterialTheme.colors.onBackground
+                ),
                 keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 value = amount,
-                onValueChange = onAmountChange
+                onValueChange = onAmountChange,
             )
             Spinner(
                 availableCurrencies,
