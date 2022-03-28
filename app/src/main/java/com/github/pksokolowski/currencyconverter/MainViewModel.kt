@@ -1,7 +1,5 @@
 package com.github.pksokolowski.currencyconverter
 
-import android.icu.math.BigDecimal
-import android.icu.text.DecimalFormat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
@@ -41,11 +39,6 @@ class MainViewModel @Inject constructor(
 
     val message = _message.asStateFlow()
 
-    private data class ExchangeRates(
-        val sellCurrencyRate: BigDecimal,
-        val buyCurrencyRate: BigDecimal
-    )
-
     init {
         fetchSubWallets()
 
@@ -53,16 +46,13 @@ class MainViewModel @Inject constructor(
             obtainExchangeRateUseCase.getUpdates(),
             sellCurrency,
             buyCurrency,
-        ) { allRates, sold, bought ->
+            sellAmount,
+        ) { allRates, sellCurrencyValue, buyCurrencyValue, sellAmountValue ->
             if (allRates == null) return@combine null
-            val sellCurrencyRate = allRates[sold] ?: return@combine null
-            val buyCurrencyRate = allRates[bought] ?: return@combine null
-            ExchangeRates(sellCurrencyRate, buyCurrencyRate)
+            val sellCurrencyRate = allRates[sellCurrencyValue] ?: return@combine null
+            val buyCurrencyRate = allRates[buyCurrencyValue] ?: return@combine null
+            computeExchangeValue(sellAmountValue, sellCurrencyRate, buyCurrencyRate)
         }
-            .combine(_sellAmount) { rates, amount ->
-                if (rates == null) return@combine null
-                computeExchangeValue(amount, rates.sellCurrencyRate, rates.buyCurrencyRate)
-            }
             .onEach { _buyAmount.value = it.toString() }
             .launchIn(viewModelScope)
     }
