@@ -1,4 +1,4 @@
-package com.github.pksokolowski.currencyconverter.backend.server.utils
+package com.github.pksokolowski.currencyconverter.backend.utils
 
 import javax.inject.Inject
 

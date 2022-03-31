@@ -1,7 +1,7 @@
 package com.github.pksokolowski.currencyconverter.domain
 
 import com.github.pksokolowski.currencyconverter.backend.BackendApi
-import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
+import com.github.pksokolowski.currencyconverter.backend.model.CurrencySubWallet
 import com.github.pksokolowski.currencyconverter.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext

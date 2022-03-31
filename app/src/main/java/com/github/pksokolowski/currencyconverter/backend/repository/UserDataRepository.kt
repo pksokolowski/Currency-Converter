@@ -1,8 +1,8 @@
-package com.github.pksokolowski.currencyconverter.backend.server.repository
+package com.github.pksokolowski.currencyconverter.backend.repository
 
 import android.icu.math.BigDecimal
 import android.icu.math.MathContext
-import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
+import com.github.pksokolowski.currencyconverter.backend.model.CurrencySubWallet
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.sync.Mutex
 import kotlinx.coroutines.sync.withLock

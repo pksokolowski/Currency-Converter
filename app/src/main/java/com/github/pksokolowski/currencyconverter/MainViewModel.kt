@@ -2,7 +2,7 @@ package com.github.pksokolowski.currencyconverter
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
-import com.github.pksokolowski.currencyconverter.backend.server.model.CurrencySubWallet
+import com.github.pksokolowski.currencyconverter.backend.model.CurrencySubWallet
 import com.github.pksokolowski.currencyconverter.common.computeExchangeValue
 import com.github.pksokolowski.currencyconverter.domain.ObtainExchangeRateUseCase
 import com.github.pksokolowski.currencyconverter.domain.ObtainSubWalletsUseCase

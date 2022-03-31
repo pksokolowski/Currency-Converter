@@ -1,7 +1,7 @@
 package com.github.pksokolowski.currencyconverter.di
 
 import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.CurrencyExchangeRatesClient
-import com.github.pksokolowski.currencyconverter.backend.server.repository.UserDataRepository
+import com.github.pksokolowski.currencyconverter.backend.repository.UserDataRepository
 import dagger.Module
 import dagger.Provides
 import dagger.hilt.InstallIn

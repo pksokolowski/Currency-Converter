@@ -2,8 +2,8 @@ package com.github.pksokolowski.currencyconverter.domain
 
 import android.icu.math.BigDecimal
 import com.github.pksokolowski.currencyconverter.backend.BackendApi
-import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
-import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
+import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionRequest
+import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionResult
 import javax.inject.Inject
 
 class PerformExchangeUseCase @Inject constructor(

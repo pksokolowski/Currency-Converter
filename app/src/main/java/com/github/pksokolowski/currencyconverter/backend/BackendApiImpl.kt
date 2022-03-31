@@ -1,12 +1,11 @@
-package com.github.pksokolowski.currencyconverter.backend.server
+package com.github.pksokolowski.currencyconverter.backend
 
 import android.icu.math.BigDecimal
-import com.github.pksokolowski.currencyconverter.backend.BackendApi
-import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
-import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
-import com.github.pksokolowski.currencyconverter.backend.server.model.UserWallet
-import com.github.pksokolowski.currencyconverter.backend.server.repository.EuroBasedCurrencyRatesRepository
-import com.github.pksokolowski.currencyconverter.backend.server.repository.UserDataRepository
+import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionRequest
+import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionResult
+import com.github.pksokolowski.currencyconverter.backend.model.UserWallet
+import com.github.pksokolowski.currencyconverter.backend.repository.EuroBasedCurrencyRatesRepository
+import com.github.pksokolowski.currencyconverter.backend.repository.UserDataRepository
 import javax.inject.Inject
 
 class BackendApiImpl @Inject constructor(

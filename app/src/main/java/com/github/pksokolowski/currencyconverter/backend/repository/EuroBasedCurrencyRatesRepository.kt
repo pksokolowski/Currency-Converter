@@ -1,10 +1,9 @@
-package com.github.pksokolowski.currencyconverter.backend.server.repository
+package com.github.pksokolowski.currencyconverter.backend.repository
 
 import android.icu.math.BigDecimal
-import com.github.pksokolowski.currencyconverter.BuildConfig
 import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.CurrencyExchangeRatesClient
 import com.github.pksokolowski.currencyconverter.backend.exchangeRatesApi.model.GetCurrencyExchangeRatesResponse
-import com.github.pksokolowski.currencyconverter.backend.server.utils.CurrentTimeProvider
+import com.github.pksokolowski.currencyconverter.backend.utils.CurrentTimeProvider
 import com.github.pksokolowski.currencyconverter.di.IoDispatcher
 import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.sync.Mutex

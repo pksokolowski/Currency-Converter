@@ -1,4 +1,4 @@
-package com.github.pksokolowski.currencyconverter.backend.server.model
+package com.github.pksokolowski.currencyconverter.backend.model
 
 import android.icu.math.BigDecimal
 

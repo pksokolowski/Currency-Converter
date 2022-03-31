@@ -1,12 +1,12 @@
-package com.github.pksokolowski.currencyconverter.backend.server
+package com.github.pksokolowski.currencyconverter.backend
 
 import android.icu.math.BigDecimal
 import android.icu.math.MathContext
-import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionRequest
-import com.github.pksokolowski.currencyconverter.backend.server.model.ExchangeTransactionResult
-import com.github.pksokolowski.currencyconverter.backend.server.repository.EuroBasedCurrencyRatesRepository
-import com.github.pksokolowski.currencyconverter.backend.server.repository.InsufficientFundsException
-import com.github.pksokolowski.currencyconverter.backend.server.repository.UserDataRepository
+import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionRequest
+import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionResult
+import com.github.pksokolowski.currencyconverter.backend.repository.EuroBasedCurrencyRatesRepository
+import com.github.pksokolowski.currencyconverter.backend.repository.InsufficientFundsException
+import com.github.pksokolowski.currencyconverter.backend.repository.UserDataRepository
 import com.github.pksokolowski.currencyconverter.common.computeExchangeValue
 import kotlinx.coroutines.NonCancellable
 import kotlinx.coroutines.withContext
