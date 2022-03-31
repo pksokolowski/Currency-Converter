@@ -1,7 +1,7 @@
 package com.github.pksokolowski.currencyconverter.backend
 
 import android.icu.math.BigDecimal
-import android.icu.math.MathContext
+import com.github.pksokolowski.currencyconverter.backend.commissions.CommissionCalculator
 import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionRequest
 import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionResult
 import com.github.pksokolowski.currencyconverter.backend.repository.EuroBasedCurrencyRatesRepository
@@ -15,6 +15,7 @@ import javax.inject.Inject
 class CurrencyExchangeProcessor @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val exchangeRatesRepository: EuroBasedCurrencyRatesRepository,
+    private val commissionCalculator: CommissionCalculator,
 ) {
     suspend fun process(transaction: ExchangeTransactionRequest): ExchangeTransactionResult {
         require(transaction.sellCurrencyCode != transaction.buyCurrencyCode) {
@@ -46,13 +47,12 @@ class CurrencyExchangeProcessor @Inject constructor(
             return error("unexpected exchange result. Rates might have changed.")
         }
 
-        val commissionFee = if (userDataRepository.transactionsCounter > 7) {
-            BigDecimal("0.007")
-                .multiply(transaction.sellAmount)
-                .setScale(2, MathContext.ROUND_UP)
-        } else {
-            BigDecimal("0.00")
-        }
+        val commissionFee = commissionCalculator.computeCommission(
+            transaction.sellCurrencyCode,
+            transaction.buyCurrencyCode,
+            transaction.sellAmount,
+            transaction.expectedBuyAmount
+        )
 
         try {
             // kind of simulation of transaction integrity enforcement
