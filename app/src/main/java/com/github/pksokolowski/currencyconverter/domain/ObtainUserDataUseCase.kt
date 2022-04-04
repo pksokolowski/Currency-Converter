@@ -7,11 +7,15 @@ import kotlinx.coroutines.CoroutineDispatcher
 import kotlinx.coroutines.withContext
 import javax.inject.Inject
 
-class ObtainSubWalletsUseCase @Inject constructor(
+class ObtainUserDataUseCase @Inject constructor(
     @IoDispatcher private val ioDispatcher: CoroutineDispatcher,
     private val backendApi: BackendApi
 ) {
     suspend fun fetchSubWallets(): List<CurrencySubWallet>? = withContext(ioDispatcher) {
         backendApi.getUserWallet()?.currencies
+    }
+
+    suspend fun fetchCommissionStatusMessage(): String? = withContext(ioDispatcher) {
+        backendApi.getCommissionStatus()
     }
 }

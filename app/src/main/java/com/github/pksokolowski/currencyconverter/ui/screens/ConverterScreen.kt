@@ -1,9 +1,7 @@
 package com.github.pksokolowski.currencyconverter.ui.screens
 
 import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.RoundedCornerShape
@@ -17,6 +15,8 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalLifecycleOwner
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.DialogProperties
@@ -39,6 +39,7 @@ fun ConverterScreen(
     val sellCurrencySelected = viewModel.sellCurrency.collectAsState()
     val buyCurrencySelected = viewModel.buyCurrency.collectAsState()
     val exchangeOperationStatus = viewModel.message.collectAsState()
+    val commissionStatus = viewModel.commissionStatus.collectAsState()
     val buyInputValue = remember(viewModel.buyAmount, lifecycleOwner) {
         viewModel.buyAmount.flowWithLifecycle(lifecycleOwner.lifecycle, Lifecycle.State.STARTED)
     }.collectAsState("0.00")
@@ -123,6 +124,21 @@ fun ConverterScreen(
                     }
                 },
                 text = { Text(status.getString()) }
+            )
+        }
+
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .fillMaxHeight()
+                .padding(8.dp),
+            verticalArrangement = Arrangement.Bottom,
+        ) {
+            Text(
+                text = commissionStatus.value.getString(),
+                modifier = Modifier.align(CenterHorizontally),
+                color = MaterialTheme.colors.primary,
+                style = TextStyle(fontWeight = FontWeight.Bold)
             )
         }
     }

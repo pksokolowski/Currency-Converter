@@ -3,6 +3,7 @@ package com.github.pksokolowski.currencyconverter.di
 import com.github.pksokolowski.currencyconverter.backend.BackendApi
 import com.github.pksokolowski.currencyconverter.backend.BackendApiImpl
 import com.github.pksokolowski.currencyconverter.backend.CurrencyExchangeProcessor
+import com.github.pksokolowski.currencyconverter.backend.commissions.CommissionCalculator
 import com.github.pksokolowski.currencyconverter.backend.repository.EuroBasedCurrencyRatesRepository
 import com.github.pksokolowski.currencyconverter.backend.repository.UserDataRepository
 import dagger.Module
@@ -17,11 +18,13 @@ object NetworkModule {
     fun provideBackendApiMock(
         userDataRepository: UserDataRepository,
         euroBasedCurrencyRatesRepository: EuroBasedCurrencyRatesRepository,
-        currencyExchangeProcessor: CurrencyExchangeProcessor
+        currencyExchangeProcessor: CurrencyExchangeProcessor,
+        commissionCalculator: CommissionCalculator
     ): BackendApi =
         BackendApiImpl(
             userDataRepository,
             euroBasedCurrencyRatesRepository,
-            currencyExchangeProcessor
+            currencyExchangeProcessor,
+            commissionCalculator,
         )
 }

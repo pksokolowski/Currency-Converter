@@ -8,4 +8,7 @@
 
     <string name="button_submit_exchange">Submit</string>
     <string name="button_ok">OK</string>
+
+    <string name="message_failed_to_fetch_commission_status">error: cannot obtain status</string>
+    <string name="message_commission_status_loading">…</string>
 </resources>

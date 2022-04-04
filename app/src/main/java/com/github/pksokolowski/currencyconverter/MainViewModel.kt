@@ -5,9 +5,10 @@ import androidx.lifecycle.viewModelScope
 import com.github.pksokolowski.currencyconverter.backend.model.CurrencySubWallet
 import com.github.pksokolowski.currencyconverter.common.computeExchangeValue
 import com.github.pksokolowski.currencyconverter.domain.ObtainExchangeRateUseCase
-import com.github.pksokolowski.currencyconverter.domain.ObtainSubWalletsUseCase
+import com.github.pksokolowski.currencyconverter.domain.ObtainUserDataUseCase
 import com.github.pksokolowski.currencyconverter.domain.PerformExchangeUseCase
 import com.github.pksokolowski.currencyconverter.ui.utils.LiteralTextMessage
+import com.github.pksokolowski.currencyconverter.ui.utils.ResIdTextMessage
 import com.github.pksokolowski.currencyconverter.ui.utils.TextMessage
 import dagger.hilt.android.lifecycle.HiltViewModel
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -19,7 +20,7 @@ import javax.inject.Inject
 
 @HiltViewModel
 class MainViewModel @Inject constructor(
-    private val obtainSubWalletsUseCase: ObtainSubWalletsUseCase,
+    private val obtainUserDataUseCase: ObtainUserDataUseCase,
     private val performExchangeUseCase: PerformExchangeUseCase,
     obtainExchangeRateUseCase: ObtainExchangeRateUseCase,
 ) : ViewModel() {
@@ -31,6 +32,8 @@ class MainViewModel @Inject constructor(
     private val _buyCurrency = MutableStateFlow("USD")
     private val _message = MutableStateFlow<TextMessage?>(null)
     private var _buyAmount = "0.00"
+    private var _commissionStatus =
+        MutableStateFlow<TextMessage>(ResIdTextMessage(R.string.message_commission_status_loading))
     //</editor-fold>
 
     val subWallets = _subWallets.asStateFlow()
@@ -39,6 +42,7 @@ class MainViewModel @Inject constructor(
     val buyCurrency = _buyCurrency.asStateFlow()
 
     val message = _message.asStateFlow()
+    val commissionStatus = _commissionStatus.asStateFlow()
 
     val buyAmount = combine(
         obtainExchangeRateUseCase.getUpdates(),
@@ -53,16 +57,24 @@ class MainViewModel @Inject constructor(
     }.onEach { _buyAmount = it.toString() }
 
     init {
-        fetchSubWallets()
+        fetchUserData()
     }
 
-    private fun fetchSubWallets() {
+    private fun fetchUserData() {
         viewModelScope.launch {
-            _subWallets.value = obtainSubWalletsUseCase.fetchSubWallets() ?: listOf()
+            _subWallets.value = obtainUserDataUseCase.fetchSubWallets() ?: listOf()
+        }
+        viewModelScope.launch {
+            val response = obtainUserDataUseCase.fetchCommissionStatusMessage()?.let {
+                LiteralTextMessage(it)
+            }
+                ?: ResIdTextMessage(R.string.message_failed_to_fetch_commission_status)
+            _commissionStatus.value = response
         }
     }
 
     fun setSellAmount(newValue: String) {
+        // enforce input format for amount to be sold
         if (newValue.count { it == '.' } > 1) return
         val dotIndex = newValue.indexOf(".")
         _sellAmount.value = newValue.filterIndexed { i, char ->
@@ -85,6 +97,8 @@ class MainViewModel @Inject constructor(
     }
 
     fun submitTransaction() {
+        _commissionStatus.value = ResIdTextMessage(R.string.message_commission_status_loading)
+
         viewModelScope.launch {
             val transactionStatus = performExchangeUseCase.exchange(
                 sellAmount = sellAmount.value,
@@ -98,7 +112,7 @@ class MainViewModel @Inject constructor(
             )
 
             if (transactionStatus.accepted) {
-                fetchSubWallets()
+                fetchUserData()
             }
         }
     }

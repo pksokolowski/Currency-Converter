@@ -7,6 +7,7 @@ import com.github.pksokolowski.currencyconverter.backend.model.UserWallet
 
 interface BackendApi {
     suspend fun getUserWallet(): UserWallet?
+    suspend fun getCommissionStatus(): String?
     suspend fun getExchangeRates(): Map<String, BigDecimal>?
     suspend fun performExchange(exchangeTransactionRequest: ExchangeTransactionRequest): ExchangeTransactionResult
 }

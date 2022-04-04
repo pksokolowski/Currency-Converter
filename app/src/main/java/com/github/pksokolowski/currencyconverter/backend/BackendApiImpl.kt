@@ -1,6 +1,7 @@
 package com.github.pksokolowski.currencyconverter.backend
 
 import android.icu.math.BigDecimal
+import com.github.pksokolowski.currencyconverter.backend.commissions.CommissionCalculator
 import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionRequest
 import com.github.pksokolowski.currencyconverter.backend.model.ExchangeTransactionResult
 import com.github.pksokolowski.currencyconverter.backend.model.UserWallet
@@ -12,9 +13,14 @@ class BackendApiImpl @Inject constructor(
     private val userDataRepository: UserDataRepository,
     private val exchangeRatesRepository: EuroBasedCurrencyRatesRepository,
     private val currencyExchangeProcessor: CurrencyExchangeProcessor,
+    private val commissionCalculator: CommissionCalculator
 ) : BackendApi {
     override suspend fun getUserWallet(): UserWallet? {
         return UserWallet(userDataRepository.getUserData())
+    }
+
+    override suspend fun getCommissionStatus(): String? {
+        return commissionCalculator.getCurrentStatusMessage()
     }
 
     override suspend fun getExchangeRates(): Map<String, BigDecimal>? {

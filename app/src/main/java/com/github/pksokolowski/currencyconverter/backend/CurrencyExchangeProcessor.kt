@@ -73,7 +73,7 @@ class CurrencyExchangeProcessor @Inject constructor(
         userDataRepository.transactionsCounter += 1
 
         return ExchangeTransactionResult(
-            accepted = true, """"
+            accepted = true, """
             |You've converted ${transaction.sellAmount} ${transaction.sellCurrencyCode} 
             |to ${transaction.expectedBuyAmount} ${transaction.buyCurrencyCode}
             |Commission fee: $commissionFee""".trimMargin()

@@ -9,4 +9,6 @@ interface CommissionCalculator {
         sellAmount: BigDecimal,
         purchaseAmount: BigDecimal
     ): BigDecimal
+
+    fun getCurrentStatusMessage(): String
 }
