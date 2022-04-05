@@ -50,7 +50,7 @@ class MainViewModel @Inject constructor(
         buyCurrency,
         sellAmount,
     ) { allRates, sellCurrencyValue, buyCurrencyValue, sellAmountValue ->
-        if (allRates == null) return@combine null
+        if (allRates == null || sellAmountValue.isBlank()) return@combine null
         val sellCurrencyRate = allRates[sellCurrencyValue] ?: return@combine null
         val buyCurrencyRate = allRates[buyCurrencyValue] ?: return@combine null
         computeExchangeValue(sellAmountValue, sellCurrencyRate, buyCurrencyRate).toString()
@@ -73,19 +73,11 @@ class MainViewModel @Inject constructor(
         }
     }
 
-    fun setSellAmount(newValue: String) {
-        // enforce input format for amount to be sold
-        if (newValue.count { it == '.' } > 1) return
-        val dotIndex = newValue.indexOf(".")
-        _sellAmount.value = newValue.filterIndexed { i, char ->
-            i < dotIndex + 3 && (char.isDigit() || char == '.')
-        }
-    }
+    private val currencyInputRegex = """\d+(\.|\d)?\d{0,2}""".toRegex()
 
-    @Suppress("UNUSED_PARAMETER")
-    fun setBuyAmount(newValue: String) {
-        // this is an illegal action, nothing needs to be changed
-        // however, an error message might be shown
+    fun setSellAmount(newValue: String) {
+        if (!currencyInputRegex.matches(newValue) && newValue.isNotEmpty()) return
+        _sellAmount.value = newValue
     }
 
     fun setSellCurrency(currencyCode: String) {

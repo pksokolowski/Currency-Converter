@@ -86,7 +86,7 @@ fun ConverterScreen(
             label = stringResource(id = R.string.label_buy),
             amount = buyInputValue.value ?: "0.00",
             availableCurrencies = subWallets.value.map { it.currencyCode },
-            onAmountChange = viewModel::setBuyAmount,
+            onAmountChange = {},
             selectedCurrency = buyCurrencySelected.value,
             onSelectedCurrencyChange = viewModel::setBuyCurrency,
         )
