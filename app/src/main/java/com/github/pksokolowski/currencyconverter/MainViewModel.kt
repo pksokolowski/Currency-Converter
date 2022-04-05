@@ -103,9 +103,7 @@ class MainViewModel @Inject constructor(
                 transactionStatus.message
             )
 
-            if (transactionStatus.accepted) {
-                fetchUserData()
-            }
+            fetchUserData()
         }
     }
 
