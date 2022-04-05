@@ -32,6 +32,19 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+    flavorDimensions "ratesApi"
+    productFlavors {
+        create("mockRates") {
+            dimension "ratesApi"
+            applicationIdSuffix = ".mock"
+            buildConfigField "boolean", "USE_MOCK_RATES", "true"
+        }
+        create("remoteApiRates") {
+            dimension "ratesApi"
+            applicationIdSuffix = ".remoteApi"
+            buildConfigField "boolean", "USE_MOCK_RATES", "false"
+        }
+    }
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8

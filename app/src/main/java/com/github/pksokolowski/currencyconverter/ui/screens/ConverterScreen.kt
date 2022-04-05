@@ -47,7 +47,7 @@ fun ConverterScreen(
     Column {
         Text(
             text = stringResource(R.string.label_my_balances),
-            fontSize = 10.sp,
+            fontSize = 12.sp,
             modifier = Modifier.padding(8.dp),
         )
         LazyRow(
@@ -65,7 +65,7 @@ fun ConverterScreen(
 
         Text(
             text = stringResource(R.string.label_exchange),
-            fontSize = 10.sp,
+            fontSize = 12.sp,
             modifier = Modifier.padding(8.dp),
         )
 
