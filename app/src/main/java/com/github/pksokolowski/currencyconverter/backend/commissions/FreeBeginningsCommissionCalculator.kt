@@ -27,7 +27,7 @@ class FreeBeginningsCommissionCalculator(
     ): BigDecimal {
         val transactionsCount = userDataRepository.transactionsCounter
 
-        val commissionFee = if (transactionsCount > FREE_TRANSACTIONS_LIMIT_INCLUSIVE) {
+        val commissionFee = if (transactionsCount >= FREE_TRANSACTIONS_LIMIT_INCLUSIVE) {
             BigDecimal("0.007")
                 .multiply(sellAmount)
                 .setScale(2, MathContext.ROUND_UP)
